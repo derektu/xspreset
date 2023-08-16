@@ -1,0 +1,13 @@
+{@type:sensor}
+input: UseQuote(True, "使用即時價欄位");
+input: Gap(1.5, "跳空百分比(%)");
+settotalbar(3);
+if UseQuote then 
+	Ret = IFF(100*(GetField("RefPrice", "D") -GetField("Open", "D")) > GetField("RefPrice", "D")*Gap, 1, 0)
+else 
+	Ret = IFF(date <> date[1] and 100*(close[1] -open) > close[1]*Gap, 1, 0);
+
+
+
+
+        
