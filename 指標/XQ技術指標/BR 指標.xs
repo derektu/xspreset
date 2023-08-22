@@ -1,3 +1,6 @@
+# BR 指標
+
+```
 {@type:indicator}
 // XQ BR指標
 //
@@ -11,4 +14,4 @@ else
 	_br = _br[1];
 
 Plot1(_br, "BR(%)");
-		
+```		
