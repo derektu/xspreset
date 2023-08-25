@@ -1,27 +1,35 @@
-# CCI (商品通道指標)
+# CCI 商品通道指標
 
 ```xs
-input: 
-Length1(14,"天數一"), 
-Length2(28,"天數二"), 
-Length3(42,"天數三"),
-UpBaseLine(100,"上基準線"), 
-MidBaseLine(0,"中基準線"), 
-UnderBaseLine(-100,"下基準線");
+input: Length(14,"天數");
 
-Plot1(CommodityChannel(Length1), "CCI1");
-Plot2(CommodityChannel(Length2), "CCI2");
-Plot3(CommodityChannel(Length3), "CCI3");
-plot4(UpBaseLine, "上基準線", checkbox:=0);
-plot5(MidBaseLine, "中基準線", checkbox:=0);
-plot6(UnderBaseLine, "下基準線" , checkbox:=0);
+var: avgtp(0);
+var: idx(0);
+var: sumDist(0);
+
+// 過去N日 TypicalPrice的平均值
+avgtp = Average(TypicalPrice, Length);
+
+// 過去N日 TypicalPrice與平均值的平均差異
+sumDist = 0;
+for idx = 0 to length - 1 begin
+	sumDist = sumDist + AbsValue(avgtp[idx] - TypicalPrice[idx]); 
+end;
+sumDist = sumDist / length;
+
+// 今日TypicalPrice與N日平均值的偏移比例
+if sumDist <> 0 then
+  value1 = (TypicalPrice - avgtp) / (0.015 * sumDist)
+else
+  value1 = 0;
+
+Plot(1, value1, "CCI");
 ```
 
-商品通道指標（CCI）是一種技術分析指標，用於評估價格是否已經偏離其平均價格。幫助交易者識別市場是否處於過度買入或過度賣出的狀態。
+商品通道指標（CCI）是一種技術分析指標，用於衡量股價與常態分佈範圍之間的差異，藉此判斷是否有超買或是超賣的現象。
 
-- CCI的應用包括：
-  1. 過度買賣信號：當CCI的值超過一定的閾值時，可能表示市場處於過度買入狀態，可能會出現價格的下跌。相反，當CCI的值低於一定的閾值，可能表示市場處於過度賣出狀態，可能會出現價格的上漲。
+CCI的數值大多落於+100 ~ -100之間，當CCI的值超出這個範圍代表市場價格處於異常強勢或弱勢中，預示著將可能出現新的趨勢。
 
-  2. 價格轉折點預測：CCI的變化可以幫助交易者預測價格的轉折點。當CCI從正數轉為負數時，可能表示價格即將下跌；當CCI從負數轉為正數時，可能表示價格即將上漲。
+當CCI指標由下向上穿越-100時，可能代表行情即將結束下跌趨勢，轉為盤整偏多，是買進的訊號。
 
-  3. 判斷趨勢強度：CCI的絕對值大小可以用來判斷市場的趨勢強度。較大的絕對值通常意味著市場正在出現強勢趨勢。
+當CCI指標由上往下跌破100時，可能代表行情即將結束上漲趨勢，轉為盤整偏空，是賣出的訊號。
